@@ -39,21 +39,21 @@ autostart = true
 margin_right = 1024.0
 margin_bottom = 600.0
 
+[node name="HeartContainer" type="HBoxContainer" parent="PlayerUI"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 1014.0
+margin_bottom = 60.0
+
 [node name="VBoxContainer" type="VBoxContainer" parent="PlayerUI"]
 margin_right = 1024.0
 margin_bottom = 600.0
 alignment = 2
 
-[node name="HBoxContainer" type="VBoxContainer" parent="PlayerUI/VBoxContainer"]
-self_modulate = Color( 1, 1, 1, 0 )
+[node name="LampOil" type="TextureProgress" parent="PlayerUI/VBoxContainer"]
 margin_top = 540.0
 margin_right = 1024.0
 margin_bottom = 600.0
-alignment = 1
-
-[node name="LampOil" type="TextureProgress" parent="PlayerUI/VBoxContainer/HBoxContainer"]
-margin_right = 1024.0
-margin_bottom = 60.0
 value = 100.0
 texture_over = ExtResource( 3 )
 texture_progress = ExtResource( 4 )
@@ -61,4 +61,4 @@ texture_progress = ExtResource( 4 )
 [connection signal="body_entered" from="InteractRadius" to="InteractRadius" method="_on_InteractRadius_body_entered"]
 [connection signal="body_exited" from="InteractRadius" to="InteractRadius" method="_on_InteractRadius_body_exited"]
 [connection signal="timeout" from="LampOilTimer" to="." method="_on_LampOilTimer_timeout"]
-[connection signal="value_changed" from="PlayerUI/VBoxContainer/HBoxContainer/LampOil" to="." method="_on_LampOil_value_changed"]
+[connection signal="value_changed" from="PlayerUI/VBoxContainer/LampOil" to="." method="_on_LampOil_value_changed"]
