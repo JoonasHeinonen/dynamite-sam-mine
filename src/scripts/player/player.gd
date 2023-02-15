@@ -2,7 +2,9 @@ extends KinematicBody
 
 const MAX_HEALTH 			= 10
 
+export (String, "Easy", "Medium", "Hard") var difficulty
 export var speed : float  	= 0
+export var gravity : float 	= 10
 
 onready var heart 			= preload("res://scenes/UI/Heart.tscn")
 onready var interact_radius = $InteractRadius
@@ -22,9 +24,8 @@ var velocity 			  	= Vector3(0, 0, 0)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	for i in player_health:
-		var hrt = heart.instance()
-		heart_container.add_child(hrt)
+	if difficulty == "" : difficulty = "Easy"
+	draw_hearts()
 	interactables = interact_radius.interactables
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -38,17 +39,16 @@ func _process(delta):
 	walk(-5, "z") if (Input.is_action_pressed("ui_up"))    else stop_player()
 	if (Input.is_action_just_pressed("ui_accept")):
 		print(interactables)
-	if (Input.is_action_just_pressed("ui_jump")):
-		player_health -= 1
-		clean_hearts()
-		for i in player_health:
-			var hrt = heart.instance()
-			heart_container.add_child(hrt)
 
 	# Game over if player has no health.
 	if (player_health == 0 || player_lamp_oil <= 0) : player_game_over = true
 	if (player_game_over) : get_tree().reload_current_scene()
-	move_and_slide(velocity, Vector3.UP)
+
+func _physics_process(delta):
+	if (Input.is_action_just_pressed("ui_jump") && is_on_floor()):
+		velocity.y = 8
+	velocity.y -= gravity *delta
+	velocity = move_and_slide(velocity, Vector3.UP)
 
 # Walking functionality.
 func walk(vel : float, axis : String):
@@ -65,6 +65,21 @@ func walk(vel : float, axis : String):
 func stop_player():
 	velocity.x = lerp(velocity.x, 0, 0.01)
 	velocity.z = lerp(velocity.z, 0, 0.01)
+
+# Function for player getting hurt.
+func hurt_player(damage : int):
+	player_health -= damage
+	clean_hearts()
+	for i in player_health:
+		var hrt = heart.instance()
+		heart_container.add_child(hrt)
+	draw_hearts()
+
+# Print all the hearts indicating player's health.
+func draw_hearts():
+	for i in player_health:
+		var hrt = heart.instance()
+		heart_container.add_child(hrt)
 
 # Clear all the existing hearts before re-drawing the hearts.
 func clean_hearts():
